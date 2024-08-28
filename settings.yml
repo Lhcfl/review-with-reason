@@ -1,2 +1,6 @@
-example_setting:
+logger_topic_id:
+  default: 863
+allow_no_reason:
   default: true
+max_length_raw:
+  default: 1000

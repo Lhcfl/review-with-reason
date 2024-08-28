@@ -2,4 +2,19 @@ en:
   theme_metadata:
     description: Review with reason
     settings:
-      example_setting: A description of a setting.
+      logger_topic_id: Topic ID for logging.
+      allow_no_reason: Allow no reason
+      max_length_raw: Max length for quoted raw
+  tell_reason: Tell reason
+  review_template:
+    noreason: (Not specified)
+    reviewed: Reviewed
+    operation: Operation
+    reason: Reason
+    see: See
+    reporter: Reporter
+    addition: Addition
+    at: At
+    details: Details
+    object:
+      post: "Post in %{url}"

@@ -1,0 +1,20 @@
+zh_CN:
+  theme_metadata:
+    description: 审核需要原因
+    settings:
+      logger_topic_id: 日志用话题ID.
+      allow_no_reason: 允许审核不加原因
+      max_length_raw: 引用全文摘录最长字数
+  tell_reason: 填写原因
+  review_template:
+    noreason: （未说明）
+    reviewed: 已审核
+    operation: 操作
+    reason: 原因
+    see: 详情参见
+    reporter: 报告者
+    addition: 补充说明
+    at: 时间
+    details: 详细信息
+    object:
+      post: "%{url} 处的帖子"
