@@ -1,0 +1,5 @@
+en:
+  theme_metadata:
+    description: Review with reason
+    settings:
+      example_setting: A description of a setting.
