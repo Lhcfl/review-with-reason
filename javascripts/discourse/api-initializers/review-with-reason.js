@@ -81,7 +81,8 @@ export default apiInitializer("1.8.0", (api) => {
                 /^https?:\/\/[^\/]+\/t\/[^\/]+\/(\d+)\/(\d)+/.exec(
                   this.reviewable.target_url
                 ) ?? [];
-              let quoteSource = this.reviewable.created_by?.username ?? "";
+              let quoteSource =
+                this.reviewable.target_created_by?.username ?? "";
               if (topic_id) {
                 quoteSource += `, post:${post_number}, topic:${topic_id}`;
               }
@@ -101,7 +102,9 @@ export default apiInitializer("1.8.0", (api) => {
               let { title, raw } = this.reviewable.payload ?? {};
               raw = expert(raw);
               const txt = [
-                `\n[quote="${this.reviewable.created_by?.username ?? ""}"]`,
+                `\n[quote="${
+                  this.reviewable.target_created_by?.username ?? ""
+                }"]`,
                 title ? `## ${title}\n\n---------\n` : "",
                 raw,
                 "[/quote]\n",
