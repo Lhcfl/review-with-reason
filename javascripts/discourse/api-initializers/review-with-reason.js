@@ -1,5 +1,6 @@
 import { action } from "@ember/object";
 import { ajax } from "discourse/lib/ajax";
+import { popupAjaxError } from "discourse/lib/ajax-error";
 import { apiInitializer } from "discourse/lib/api";
 import { bind } from "discourse-common/utils/decorators";
 import I18n from "I18n";
@@ -53,6 +54,10 @@ function logger_topic_id({ category_id, type }) {
   return Number(settings.logger_topic_id);
 }
 
+function i18nOf(label) {
+  return I18n.t(themePrefix(`review_template.${label}`));
+}
+
 export default apiInitializer("1.8.0", (api) => {
   api.modifyClass(
     "component:reviewable-item",
@@ -65,8 +70,6 @@ export default apiInitializer("1.8.0", (api) => {
         renderLogPostRawTemplate(performableAction, reason) {
           /** @param {String[]} cols */
           const makeRow = (...cols) => "|" + cols.join("|") + "|";
-          const i18nOf = (label) =>
-            I18n.t(themePrefix(`review_template.${label}`));
           const reviewable_link = `[/review/${this.reviewable.id}](/review/${this.reviewable.id})`;
 
           const data = [
@@ -133,22 +136,33 @@ export default apiInitializer("1.8.0", (api) => {
 
               data.push(txt);
               break;
-            default:
-              // TODO
-              if (this.reviewable.payload) {
-                const { username, name, email } = this.reviewable.payload;
-                const details = [makeRow(i18nOf("details"), ""), "|---|---|"];
-                if (username) {
-                  details.push("Username", `[${username}](/u/${username})`);
-                }
-                if (name) {
-                  details.push("Name", `${name}`);
-                }
-                if (email) {
-                  details.push("Email", `${email}`);
-                }
+
+            case "ReviewableUser":
+              const { username, name, email } = this.reviewable.payload;
+
+              const details = [
+                `\n**${i18nOf("details")}**`,
+                makeRow("", ""),
+                "|---|---|",
+              ];
+              details.push(
+                makeRow("**Username**", `[${username}](/u/${username})`)
+              );
+              details.push(makeRow("**Name**", name || "--"));
+              details.push(makeRow("**Email**", `${email}`));
+
+              for (const {
+                name: field_name,
+                value: field_value,
+              } of this.site.collectUserFields(this.reviewable.user_fields)) {
+                details.push(makeRow(field_name, field_value));
               }
+
+              data.push(details.join("\n"));
+
               break;
+
+            default:
           }
 
           if (this.reviewable.reviewable_scores) {
@@ -209,31 +223,52 @@ export default apiInitializer("1.8.0", (api) => {
 
         @bind
         _performConfirmed(performableAction, additionalData = {}) {
+          // console.log(this.reviewable, performableAction, additionalData);
+
           if (additionalData.revise_reason) {
             // TODO
             return super._performConfirmed(performableAction, additionalData);
           }
 
+          const performLog = (reason) => {
+            const raw = this.renderLogPostRawTemplate(
+              performableAction,
+              reason
+            );
+
+            return ajax("/posts", {
+              type: "POST",
+              data: {
+                topic_id: logger_topic_id(this.reviewable),
+                raw,
+              },
+            });
+          };
+
+          let reason = null;
+
           if (this.shouldSkipTellReason()) {
-            return super._performConfirmed(performableAction, additionalData);
+            reason = i18nOf("noreason");
+          }
+
+          if (this.reviewable.rejectReason) {
+            reason = this.reviewable.rejectReason;
+          }
+
+          if (reason != null) {
+            performLog(reason)
+              .then(() => {
+                super._performConfirmed(performableAction, additionalData);
+              })
+              .catch(popupAjaxError);
+            return;
           }
 
           this.modal.show(ReviewReason, {
             model: {
               allowNoReason: settings.allow_no_reason,
               onSubmit: async (modal) => {
-                const raw = this.renderLogPostRawTemplate(
-                  performableAction,
-                  modal.reason
-                );
-
-                await ajax("/posts", {
-                  type: "POST",
-                  data: {
-                    topic_id: logger_topic_id(this.reviewable),
-                    raw,
-                  },
-                });
+                await performLog(modal.reason);
 
                 super._performConfirmed(performableAction);
               },
