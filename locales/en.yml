@@ -5,6 +5,9 @@ en:
       logger_topic_id: Topic ID for logging.
       allow_no_reason: Allow no reason
       max_length_raw: Max length for quoted raw
+      skip_for_categories: For these categories, skip the requirement to explain reason
+      logger_topic_id_override_for_catrgories: For these categories, override logger_topic_id. The format is <code>category_id=>topic_id</code>, e.g. <code>3=>863</code>
+      logger_topic_id_override_for_reviewable_type: For these reviewable types, override logger_topic_id. The format is  <code>reviewable_type=>topic_id</code>, e.g. <code>ReviewableUser=>863</code>. The reviewable types can be seen <a href="https://github.com/discourse/discourse/blob/main/app/models/reviewable.rb#L72-L74"> here </a>
   tell_reason: Tell reason
   review_template:
     noreason: (Not specified)

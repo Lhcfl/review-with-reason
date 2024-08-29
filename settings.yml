@@ -4,3 +4,13 @@ allow_no_reason:
   default: true
 max_length_raw:
   default: 1000
+logger_topic_id_override_for_reviewable_type:
+  default: "ReviewableUser=>863"
+  type: list
+skip_for_categories:
+  default: ""
+  type: list
+  list_type: category
+logger_topic_id_override_for_catrgories:
+  default: "3=>863"
+  type: list

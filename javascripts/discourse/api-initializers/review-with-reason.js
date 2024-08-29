@@ -30,9 +30,30 @@ function expert(str) {
   return str;
 }
 
-export default apiInitializer("1.8.0", (api) => {
-  const LOGGER_TOPIC_ID = Number(settings.logger_topic_id);
+function logger_topic_id({ category_id, type }) {
+  const override_map_category = Object.fromEntries(
+    settings.logger_topic_id_override_for_catrgories
+      .split("|")
+      .map((rule) => rule.split("=>").map((s) => Number(s)))
+  );
+  const override_map_reviewable_type = Object.fromEntries(
+    settings.logger_topic_id_override_for_reviewable_type
+      .split("|")
+      .map((rule) => rule.split("=>"))
+  );
 
+  if (override_map_reviewable_type[type]) {
+    return override_map_reviewable_type[type];
+  }
+
+  if (override_map_category[category_id]) {
+    return override_map_category[category_id];
+  }
+
+  return Number(settings.logger_topic_id);
+}
+
+export default apiInitializer("1.8.0", (api) => {
   api.modifyClass(
     "component:reviewable-item",
     (SuperClass) =>
@@ -175,10 +196,25 @@ export default apiInitializer("1.8.0", (api) => {
             .join("\n");
         }
 
+        @action
+        shouldSkipTellReason() {
+          /** @type {String[]} */
+          const skip_for_categories = settings.skip_for_categories.split("|");
+          if (
+            skip_for_categories.includes(String(this.reviewable.category_id))
+          ) {
+            return true;
+          }
+        }
+
         @bind
         _performConfirmed(performableAction, additionalData = {}) {
           if (additionalData.revise_reason) {
             // TODO
+            return super._performConfirmed(performableAction, additionalData);
+          }
+
+          if (this.shouldSkipTellReason()) {
             return super._performConfirmed(performableAction, additionalData);
           }
 
@@ -194,7 +230,7 @@ export default apiInitializer("1.8.0", (api) => {
                 await ajax("/posts", {
                   type: "POST",
                   data: {
-                    topic_id: LOGGER_TOPIC_ID,
+                    topic_id: logger_topic_id(this.reviewable),
                     raw,
                   },
                 });

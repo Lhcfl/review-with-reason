@@ -5,6 +5,9 @@ zh_CN:
       logger_topic_id: 日志用话题ID.
       allow_no_reason: 允许审核不加原因
       max_length_raw: 引用全文摘录最长字数
+      skip_for_categories: 对于这些类别，跳过对于讲述原因的要求
+      logger_topic_id_override_for_catrgories: 对于这些类别，覆盖logger_topic_id。格式为 <code>category_id=>topic_id</code>, e.g. <code>3=>863</code>
+      logger_topic_id_override_for_reviewable_type: 对于这些审核类别，覆盖logger_topic_id。格式为 <code>reviewable_type=>topic_id</code>, e.g. <code>ReviewableUser=>863</code>. 审核类别可以参见 <a href="https://github.com/discourse/discourse/blob/main/app/models/reviewable.rb#L72-L74"> 该文件 </a>
   tell_reason: 填写原因
   review_template:
     noreason: （未说明）
