@@ -14,3 +14,10 @@ skip_for_categories:
 logger_topic_id_override_for_catrgories:
   default: "3=>863"
   type: list
+hide_reviewable_details:
+  default: false
+hide_reviewable_user_email:
+  default: false
+hide_reviewable_user_fields:
+  default: ""
+  type: list

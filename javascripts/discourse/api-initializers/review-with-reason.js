@@ -138,8 +138,11 @@ export default apiInitializer("1.8.0", (api) => {
               break;
 
             case "ReviewableUser":
-              const { username, name, email } = this.reviewable.payload;
+              let { username, name, email } = this.reviewable.payload;
 
+              if (settings.hide_reviewable_user_email) {
+                email = "&mdash;";
+              }
               const details = [
                 `\n**${i18nOf("details")}**`,
                 makeRow("", ""),
@@ -148,14 +151,18 @@ export default apiInitializer("1.8.0", (api) => {
               details.push(
                 makeRow("**Username**", `[${username}](/u/${username})`)
               );
-              details.push(makeRow("**Name**", name || "--"));
+              details.push(makeRow("**Name**", name || "&mdash;"));
               details.push(makeRow("**Email**", `${email}`));
 
+              const ignoredFieldNames =
+                settings.hide_reviewable_user_fields.split("|");
               for (const {
                 name: field_name,
                 value: field_value,
               } of this.site.collectUserFields(this.reviewable.user_fields)) {
-                details.push(makeRow(field_name, field_value));
+                if (!ignoredFieldNames.includes(field_name)) {
+                  details.push(makeRow(field_name, field_value));
+                }
               }
 
               data.push(details.join("\n"));
@@ -165,7 +172,7 @@ export default apiInitializer("1.8.0", (api) => {
             default:
           }
 
-          if (this.reviewable.reviewable_scores) {
+          if (!settings.hide_reviewable_details) {
             let lines = [
               makeRow(
                 i18nOf("reporter"),

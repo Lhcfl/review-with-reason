@@ -8,6 +8,9 @@ zh_CN:
       skip_for_categories: 对于这些类别，跳过对于讲述原因的要求
       logger_topic_id_override_for_catrgories: 对于这些类别，覆盖logger_topic_id。格式为 <code>category_id=>topic_id</code>, e.g. <code>3=>863</code>
       logger_topic_id_override_for_reviewable_type: 对于这些审核类别，覆盖logger_topic_id。格式为 <code>reviewable_type=>topic_id</code>, e.g. <code>ReviewableUser=>863</code>. 审核类别可以参见 <a href="https://github.com/discourse/discourse/blob/main/app/models/reviewable.rb#L72-L74"> 该文件 </a>
+      hide_reviewable_details: 在日志中隐藏可审核条目的详细信息，比如报告人、时间和报告原因。
+      hide_reviewable_user_email: 在日志中隐藏可审核用户的电子邮件
+      hide_reviewable_user_fields: 在日志中需要隐藏的可审核用户的字段的名字
   tell_reason: 填写原因
   review_template:
     noreason: （未说明）
