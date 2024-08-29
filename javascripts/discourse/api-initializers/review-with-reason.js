@@ -223,13 +223,6 @@ export default apiInitializer("1.8.0", (api) => {
 
         @bind
         _performConfirmed(performableAction, additionalData = {}) {
-          // console.log(this.reviewable, performableAction, additionalData);
-
-          if (additionalData.revise_reason) {
-            // TODO
-            return super._performConfirmed(performableAction, additionalData);
-          }
-
           const performLog = (reason) => {
             const raw = this.renderLogPostRawTemplate(
               performableAction,
@@ -244,6 +237,27 @@ export default apiInitializer("1.8.0", (api) => {
               },
             });
           };
+
+          // console.log(this.reviewable, performableAction, additionalData);
+
+          if (additionalData.revise_reason) {
+            const reasonText = [
+              additionalData.revise_custom_reason
+                ? additionalData.revise_custom_reason
+                : additionalData.revise_reason,
+              ...(additionalData.revise_feedback
+                ? [
+                    `\n**${i18nOf("feedback")}**`,
+                    additionalData.revise_feedback,
+                    "\n",
+                  ]
+                : []),
+            ].join("\n");
+
+            return performLog(reasonText).then(() => {
+              super._performConfirmed(performableAction, additionalData);
+            });
+          }
 
           let reason = null;
 

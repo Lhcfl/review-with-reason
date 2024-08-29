@@ -19,5 +19,6 @@ zh_CN:
     addition: 补充说明
     at: 时间
     details: 详细信息
+    feedback: 意见
     object:
       post: "%{url} 处的帖子"

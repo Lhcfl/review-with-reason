@@ -19,5 +19,6 @@ en:
     addition: Addition
     at: At
     details: Details
+    feedback: Feedback
     object:
       post: "Post in %{url}"
