@@ -1,11 +1,11 @@
 import Component from "@glimmer/component";
 import { tracked } from "@glimmer/tracking";
 import { fn } from "@ember/helper";
-import { on } from "@ember/modifier";
 import { action } from "@ember/object";
 import { not } from "truth-helpers";
 import ConditionalLoadingSpinner from "discourse/components/conditional-loading-spinner";
 import DButton from "discourse/components/d-button";
+import DEditor from "discourse/components/d-editor";
 import DModal from "discourse/components/d-modal";
 import DModalCancel from "discourse/components/d-modal-cancel";
 import withEventValue from "discourse/helpers/with-event-value";
@@ -48,9 +48,10 @@ export default class ReviewWithReasonForm extends Component {
       >
         <:body>
           <div class="control-group">
-            <textarea
-              value={{this.reason}}
-              {{on "input" (withEventValue (fn (mut this.reason)))}}
+            <DEditor
+              @value={{readonly this.reason}}
+              @change={{withEventValue (fn (mut this.reason))}}
+              class="form-kit__control-composer"
               min-width="500px"
               min-height="400px"
               max-height="1000px"
