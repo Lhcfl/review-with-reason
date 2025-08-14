@@ -10,7 +10,7 @@ import DModal from "discourse/components/d-modal";
 import DModalCancel from "discourse/components/d-modal-cancel";
 import withEventValue from "discourse/helpers/with-event-value";
 import { popupAjaxError } from "discourse/lib/ajax-error";
-import i18n from "discourse-common/helpers/i18n";
+import { i18n } from "discourse-i18n";
 
 export default class ReviewWithReasonForm extends Component {
   @tracked loading = false;
@@ -62,7 +62,7 @@ export default class ReviewWithReasonForm extends Component {
 
         <:footer>
           <DButton
-            @class="btn-primary"
+            class="btn-primary"
             @label="ok_value"
             @action={{this.submit}}
             @disabled={{not this.canSubmit}}
