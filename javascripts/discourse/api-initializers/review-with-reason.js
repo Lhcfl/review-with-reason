@@ -3,7 +3,7 @@ import { ajax } from "discourse/lib/ajax";
 import { popupAjaxError } from "discourse/lib/ajax-error";
 import { apiInitializer } from "discourse/lib/api";
 import { bind } from "discourse-common/utils/decorators";
-import I18n from "I18n";
+import { i18n } from "discourse-i18n";
 import ReviewReason from "../components/modal/review-with-reason-form";
 
 /** @param {String} str  */
@@ -54,8 +54,8 @@ function logger_topic_id({ category_id, type }) {
   return Number(settings.logger_topic_id);
 }
 
-function i18nOf(label) {
-  return I18n.t(themePrefix(`review_template.${label}`));
+function i18nOf(label, ...data) {
+  return i18n(themePrefix(`review_template.${label}`), ...data);
 }
 
 export default apiInitializer("1.8.0", (api) => {
@@ -93,12 +93,9 @@ export default apiInitializer("1.8.0", (api) => {
 
           switch (this.reviewable.type) {
             case "ReviewableFlaggedPost":
-              data[0].text = I18n.t(
-                themePrefix(`review_template.object.post`),
-                {
-                  url: `[${this.reviewable.topic?.title}](${this.reviewable.target_url})`,
-                }
-              );
+              data[0].text = i18nOf("object.post", {
+                url: `[${this.reviewable.topic?.title}](${this.reviewable.target_url})`,
+              });
 
               // eslint-disable-next-line no-unused-vars
               const [_, topic_id, post_number] =
